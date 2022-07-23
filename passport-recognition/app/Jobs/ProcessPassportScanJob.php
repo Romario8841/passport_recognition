@@ -10,6 +10,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
+use Illuminate\Support\Facades\Log;
+use Mockery\Exception;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -24,10 +26,10 @@ class ProcessPassportScanJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($image_path)
+    public function __construct($image_path, $passport)
     {
         $this->image_path = $image_path;
-
+        $this->passport   = $passport;
 
     }
 
@@ -38,12 +40,23 @@ class ProcessPassportScanJob implements ShouldQueue
      */
     public function handle()
     {
+
         $process = new Process(['python', "passport_recognition\server.py", $this->image_path]);
         $process->run();
+        $result_error = $process->getErrorOutput();
+        echo $result_error;
         $result = $process->getOutput();
-        $string = str_replace(array("\n", "\r"), '', $result);
-        $decoded_array = json_decode($string);
-        var_dump($decoded_array);
+        $passport = Passport::where('file_path', $this->image_path)->first();
+        echo 123123;
+        try {
+            $passport->first_name = $result;
+            $passport->on_pending = false;
+            $passport->save();
+        }
+        catch (Exception $e){
+            Log::error($e->toArray());
+        }
+
 
     }
 }

@@ -15,12 +15,9 @@ return new class extends Migration
     {
         Schema::create('passports', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name')->nullable();
-            $table->string('middle_name')->nullable();
-            $table->string('last_name')->nullable();
-            $table->string('snub')->nullable();
-            $table->string('birth_date')->nullable();
+            $table->longText('first_name')->nullable();
             $table->string('file_path');
+            $table->boolean('on_pending')->default(true);
             $table->timestamps();
         });
     }

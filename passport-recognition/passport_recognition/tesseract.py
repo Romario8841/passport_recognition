@@ -10,5 +10,8 @@ except ImportError:
 
 def ocr_core(filename):
     text = pytesseract.image_to_string(Image.open(filename), lang='rus')
-    # print(text)
     return text
+
+def dig_ocr_core(filename):
+    digits = pytesseract.image_to_string(Image.open(filename), lang='rus',config='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
+    return digits

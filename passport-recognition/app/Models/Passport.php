@@ -12,7 +12,11 @@ class Passport extends Model
 
     use HasFactory;
     public mixed $passports;
+    /**
+     * @var mixed|string
+     */
+
     protected $table = 'passports';
     # Разрешение на изменение данных в таблице
-    protected $guarded  = false;
+    protected $guarded  = [];
 }

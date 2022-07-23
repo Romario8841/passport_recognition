@@ -9,9 +9,9 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-
 
 class PassportController extends Controller
 {
@@ -50,18 +50,31 @@ class PassportController extends Controller
             // Save the file locally in the storage/public/ folder under a new folder named /product
             $request->file->store('passports', 'public');
 
+
+            $file_path = "storage\app\public\passports\\" . $request->file->hashName();
             // Store the record, using the new file hashname which will be it's new filename identity.
-            $passport = new Passport([
-                "file_path" => "storage\app\public\passports\\".$request->file->hashName()
-            ]);
 
-            $passport->save(); // save the record.
+            $passport = new Passport;
+            $passport->file_path = $file_path;
+            $passport->on_pending = true;
+            $passport->save();
+            dispatch(new ProcessPassportScanJob($file_path, $passport));
 
-            dispatch(new ProcessPassportScanJob($passport->file_path));
+            return redirect()->route('show', $passport->id);
+        }
+    }
+
+        public function show($id)
+        {
+            Passport::all();
+            $passport = Passport::where('id', $id)->first();
+            return view('passports.show', compact('passport'));
+
+
+//            return view('passports.show', compact($data));
+
         }
 
 
-
-    }
 
 }

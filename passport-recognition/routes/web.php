@@ -14,3 +14,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::resource('passports', 'App\Http\Controllers\PassportController');
+Route::get('passport/{file_path}', 'App\Http\Controllers\PassportController@show')->name('show');

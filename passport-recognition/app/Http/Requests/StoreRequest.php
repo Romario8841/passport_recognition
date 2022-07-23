@@ -25,6 +25,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'file_path' => 'required|mimes:jpeg,jpg,bmp,png',
+            'first_name'
         ];
     }
 }
