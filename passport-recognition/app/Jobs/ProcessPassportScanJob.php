@@ -47,7 +47,6 @@ class ProcessPassportScanJob implements ShouldQueue
         echo $result_error;
         $result = $process->getOutput();
         $passport = Passport::where('file_path', $this->image_path)->first();
-        echo 123123;
         try {
             $passport->first_name = $result;
             $passport->on_pending = false;
